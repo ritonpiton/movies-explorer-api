@@ -1,4 +1,3 @@
-require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -10,8 +9,7 @@ const { limiter } = require('./utils/limiter');
 const appRouter = require('./routes/index');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const errorHandler = require('./middlewares/errorHandler');
-
-const { PORT = 3001, DATABASE_URL = 'mongodb://localhost:27017/moviesdb' } = process.env;
+const { CURRENT_PORT, CURRENT_DATABASE_URL } = require('./configs');
 
 const app = express();
 
@@ -23,7 +21,7 @@ app.use(cookieParser()); // подключаем парсер кук как ми
 app.use(cors({ origin: true }));
 
 // подключаемся к серверу mongo
-mongoose.connect(`${DATABASE_URL}`, {
+mongoose.connect(`${CURRENT_DATABASE_URL}`, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
@@ -41,6 +39,6 @@ app.use(errorLogger); // логгер ошибок
 app.use(errors()); // обработчик ошибок celebrate
 app.use(errorHandler); // централизованный обработчик
 
-app.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}`);
+app.listen(CURRENT_PORT, () => {
+  console.log(`App listening on port ${CURRENT_PORT}`);
 });

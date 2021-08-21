@@ -16,5 +16,5 @@ const signinValidator = celebrate({
 
 module.exports = {
   signupValidator,
-  signinValidator
-}
+  signinValidator,
+};

@@ -7,7 +7,7 @@ const ForbiddenError = require('../errors/ForbiddenError'); // 403
 const NotFoundError = require('../errors/NotFoundError'); // 404
 const {
   notFoundCardMessage, deleteIsNotAllowedMessage, successfulDeleteMessage, badRequestMessage,
-} = require('../utils/errorMessages');
+} = require('../configs/errorsMessages');
 
 // возвращает все сохранённые пользователем фильмы
 module.exports.getMovies = (req, res, next) => {

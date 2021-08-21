@@ -10,9 +10,9 @@ const NotFoundError = require('../errors/NotFoundError'); // 404
 const ConflictError = require('../errors/ConflictError'); // 409
 const {
   badRequestMessage, existEmailMessage, wrongEmailOrPasswordMessage, notFoundUserMessage,
-} = require('../utils/errorMessages');
+} = require('../configs/errorsMessages');
 
-const { JWT_SECRET = 'some-secret-key' } = process.env;
+const { CURRENT_JWT_SECRET } = require('../configs');
 
 module.exports.register = (req, res, next) => {
   const { email, name } = req.body;
@@ -44,7 +44,7 @@ module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
+      const token = jwt.sign({ _id: user._id }, CURRENT_JWT_SECRET, { expiresIn: '7d' });
       res.send({ token });
     })
     .catch(() => {
