@@ -1,25 +1,15 @@
 const appRouter = require('express').Router();
-const { celebrate, Joi } = require('celebrate');
 const { register, login } = require('../controllers/users');
+const { signupValidator, signinValidator } = require('../middlewares/validations');
 const auth = require('../middlewares/auth');
 const usersRouter = require('./users');
 const moviesRouter = require('./movies');
 const NotFoundError = require('../errors/NotFoundError');
 
 // роуты, не требующие авторизации
-appRouter.post('/signup', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required(),
-  }).unknown(true),
-}), register);
+appRouter.post('/signup', signupValidator, register);
 
-appRouter.post('/signin', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required(),
-  }),
-}), login);
+appRouter.post('/signin', signinValidator, login);
 
 // роуты, требующие авторизацию (все остальные)
 appRouter.use(auth);
