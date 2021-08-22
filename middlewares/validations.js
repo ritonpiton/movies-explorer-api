@@ -1,4 +1,4 @@
-const { celebrate, Joi } = require('celebrate');const validator = require('validator');
+const { celebrate, Joi } = require('celebrate'); const validator = require('validator');
 const { joiHelpersURLMessage } = require('../configs/errorsMessages');
 
 const signupValidator = celebrate({

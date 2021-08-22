@@ -86,7 +86,6 @@ module.exports.updateUserInfo = (req, res, next) => {
       res.status(200).send({ data: user });
     })
     .catch((err) => {
-      console.log(err.name);
       if (err.name === 'ValidationError') {
         next(new BadRequestError(badRequestMessage));
       } else if (err.message === 'NotFound') {
