@@ -1,6 +1,4 @@
-const path = require('path');
-
-const Movie = require(path.join(__dirname, '../models/movie'));
+const Movie = require('../models/movie');
 
 const BadRequestError = require('../errors/BadRequestError'); // 400
 const ForbiddenError = require('../errors/ForbiddenError'); // 403
@@ -51,8 +49,9 @@ module.exports.addMovie = (req, res, next) => {
     .then((movie) => res.send({ data: movie }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequestError(badRequestMessage);
+        next(new BadRequestError(badRequestMessage));
       }
+      next(err);
     })
     .catch(next);
 };
@@ -63,18 +62,18 @@ module.exports.deleteMovieById = (req, res, next) => {
   Movie.findById(thisMovie)
     .then((movie) => {
       if (!movie) {
-        throw new NotFoundError(notFoundCardMessage);
+        next(new NotFoundError(notFoundCardMessage));
       } else if (movie.owner.toString() === req.user._id) {
-        Movie.findByIdAndRemove(thisMovie)
+        movie.remove()
           .then(() => res.send({ message: successfulDeleteMessage }))
           .catch(next);
       } else {
-        throw new ForbiddenError(deleteIsNotAllowedMessage);
+        next(new ForbiddenError(deleteIsNotAllowedMessage));
       }
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequestError(badRequestMessage);
+        next(new BadRequestError(badRequestMessage));
       }
       next(err);
     })

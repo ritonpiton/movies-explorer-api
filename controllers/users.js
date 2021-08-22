@@ -1,15 +1,18 @@
-const path = require('path');
 const bcrypt = require('bcryptjs'); // импортируем bcrypt
 const jwt = require('jsonwebtoken'); // импортируем модуль jsonwebtoken
 
-const User = require(path.join(__dirname, '../models/user'));
+const User = require('../models/user');
 
 const BadRequestError = require('../errors/BadRequestError'); // 400
 const UnauthorizedError = require('../errors/UnauthorizedError'); // 401
 const NotFoundError = require('../errors/NotFoundError'); // 404
 const ConflictError = require('../errors/ConflictError'); // 409
 const {
-  badRequestMessage, existEmailMessage, wrongEmailOrPasswordMessage, notFoundUserMessage,
+  badRequestMessage,
+  existEmailMessage,
+  wrongEmailOrPasswordMessage,
+  notFoundUserMessage,
+  conflictProfileEmailMessage,
 } = require('../configs/errorsMessages');
 
 const { CURRENT_JWT_SECRET } = require('../configs');
@@ -31,9 +34,9 @@ module.exports.register = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequestError(badRequestMessage);
+        next(new BadRequestError(badRequestMessage));
       } else if (err.name === 'MongoError' && err.code === 11000) {
-        throw new ConflictError(existEmailMessage);
+        next(new ConflictError(existEmailMessage));
       }
       next(err);
     })
@@ -48,7 +51,7 @@ module.exports.login = (req, res, next) => {
       res.send({ token });
     })
     .catch(() => {
-      throw new UnauthorizedError(wrongEmailOrPasswordMessage);
+      next(new UnauthorizedError(wrongEmailOrPasswordMessage));
     })
     .catch(next);
 };
@@ -78,15 +81,18 @@ module.exports.updateUserInfo = (req, res, next) => {
   })
     .then((user) => {
       if (!user) {
-        throw new Error('NotFound');
+        next(new Error('NotFound'));
       }
       res.status(200).send({ data: user });
     })
     .catch((err) => {
+      console.log(err.name);
       if (err.name === 'ValidationError') {
-        throw new BadRequestError(badRequestMessage);
+        next(new BadRequestError(badRequestMessage));
       } else if (err.message === 'NotFound') {
-        throw new NotFoundError(notFoundUserMessage);
+        next(new NotFoundError(notFoundUserMessage));
+      } else if (err.name === 'MongoError' && err.code === 11000) {
+        next(new ConflictError(conflictProfileEmailMessage));
       }
       next(err);
     })

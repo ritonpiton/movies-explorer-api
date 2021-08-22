@@ -13,6 +13,9 @@ const { CURRENT_PORT, CURRENT_DATABASE_URL } = require('./configs');
 
 const app = express();
 
+app.use(requestLogger); // логгер запросов
+app.use(limiter); // rate limiter
+
 app.use(helmet());
 app.disable('x-powered-by');
 app.use(bodyParser.json());
@@ -27,9 +30,6 @@ mongoose.connect(`${CURRENT_DATABASE_URL}`, {
   useFindAndModify: false,
   useUnifiedTopology: true,
 });
-
-app.use(requestLogger); // логгер запросов
-app.use(limiter); // rate limiter
 
 app.use('/', appRouter); // роут
 

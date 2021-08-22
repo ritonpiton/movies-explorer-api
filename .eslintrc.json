@@ -10,10 +10,6 @@
 
     ],
     "rules": {
-      "no-underscore-dangle": ["off", {"allow": ["id"]}],
-      "no-console": ["off"],
-      "import/no-dynamic-require": ["off"],
-      "no-unused-vars": ["off"],
-      "consistent-return": ["off"]
+      "no-underscore-dangle": ["off", {"allow": ["id"]}]
     }
 }

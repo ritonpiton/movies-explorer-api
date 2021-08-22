@@ -1,6 +1,5 @@
-/* eslint-disable max-len */
 const movieRouter = require('express').Router();
-const { celebrate, Joi } = require('celebrate');
+const { addMovieValidator, deleteMovieValidator } = require('../middlewares/validations');
 
 const {
   getMovies, addMovie, deleteMovieById,
@@ -9,26 +8,8 @@ const {
 // возвращает все сохранённые пользователем фильмы
 movieRouter.get('/', getMovies);
 
-movieRouter.post('/', celebrate({
-  body: Joi.object().keys({
-    country: Joi.string().required(),
-    director: Joi.string().required(),
-    duration: Joi.number().required(),
-    year: Joi.string().required(),
-    description: Joi.string().required(),
-    image: Joi.string().uri().required(),
-    trailer: Joi.string().uri().required(),
-    thumbnail: Joi.string().uri().required(),
-    movieId: Joi.number().required(),
-    nameRU: Joi.string().required(),
-    nameEN: Joi.string().required(),
-  }),
-}), addMovie);
+movieRouter.post('/', addMovieValidator, addMovie);
 
-movieRouter.delete('/:movieId', celebrate({
-  params: Joi.object().keys({
-    movieId: Joi.string().required().hex().length(24),
-  }),
-}), deleteMovieById);
+movieRouter.delete('/:movieId', deleteMovieValidator, deleteMovieById);
 
 module.exports = movieRouter;

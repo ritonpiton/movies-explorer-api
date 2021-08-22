@@ -1,5 +1,5 @@
 const userRouter = require('express').Router();
-const { celebrate, Joi } = require('celebrate');
+const { updateUserInfoValidator } = require('../middlewares/validations');
 
 const {
   getCurrentUserInfo, updateUserInfo,
@@ -9,11 +9,6 @@ const {
 userRouter.get('/me', getCurrentUserInfo);
 
 // обновляет информацию о пользователе (email и имя)
-userRouter.patch('/me', celebrate({
-  body: Joi.object().keys({
-    name: Joi.string().required().min(2).max(30),
-    email: Joi.string().email().required(),
-  }),
-}), updateUserInfo);
+userRouter.patch('/me', updateUserInfoValidator, updateUserInfo);
 
 module.exports = userRouter;
