@@ -9,7 +9,8 @@ const {
 
 // возвращает все сохранённые пользователем фильмы
 module.exports.getMovies = (req, res, next) => {
-  Movie.find({})
+  const owner = req.user._id;
+  Movie.find({ owner })
     .then((movies) => res.send({ data: movies }))
     .catch(next);
 };
